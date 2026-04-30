@@ -242,6 +242,7 @@ export default function KLPage() {
   const imageWidth = isSmallMobile ? 112 : isMobile ? 128 : viewportWidth < 1024 ? 150 : 200
   const imageHeight = isSmallMobile ? 148 : isMobile ? 168 : viewportWidth < 1024 ? 195 : 260
   const radius = Math.round(carouselSize * (isMobile ? 0.36 : 0.34))
+  const isLightboxOpen = lightboxIndex !== null
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -399,13 +400,21 @@ export default function KLPage() {
         ))}
       </div>
       
-      <div className="fixed top-3 left-3 sm:top-6 sm:left-6 z-50 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center gap-1.5 sm:gap-2 shadow-lg max-w-[calc(100vw-8rem)] sm:max-w-none">
+      <div
+        className={`fixed top-[max(0.75rem,env(safe-area-inset-top))] left-3 sm:top-6 sm:left-6 z-50 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center gap-1.5 sm:gap-2 shadow-lg max-w-[calc(100vw-8rem)] sm:max-w-none transition-opacity duration-200 ${
+          isLightboxOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
         <Cake className="w-4 h-4 text-pink-300" />
         <span className="text-xs sm:text-sm font-semibold tracking-wide text-yellow-200 truncate">Happy Birthday to Khanh Linh</span>
         <span className="text-sm sm:text-base" aria-hidden="true">🎂</span>
       </div>
       
-      <div className="fixed top-3 right-3 sm:top-6 sm:right-6 z-50 flex flex-col items-end gap-2">
+      <div
+        className={`fixed top-[max(0.75rem,env(safe-area-inset-top))] right-3 sm:top-6 sm:right-6 z-50 flex flex-col items-end gap-2 transition-opacity duration-200 ${
+          isLightboxOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
         <Link
           href="/"
           className="relative overflow-hidden px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-semibold text-sm sm:text-base text-white bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 border border-white/40 shadow-[0_0_18px_rgba(236,72,153,0.5)] hover:scale-105 hover:shadow-[0_0_24px_rgba(168,85,247,0.65)] transition-all duration-300 flex items-center gap-1.5 sm:gap-2"
@@ -464,7 +473,7 @@ export default function KLPage() {
         />
       )}
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 pt-28 sm:pt-24 pb-8">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 pt-32 sm:pt-24 pb-8">
 
         <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-5 md:mb-8 flex-wrap">
           <PartyPopper className="float-animation w-7 md:w-10 h-7 md:h-10 text-yellow-300" />

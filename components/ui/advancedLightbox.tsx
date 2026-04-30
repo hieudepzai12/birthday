@@ -68,7 +68,7 @@ export default function AdvancedLightbox({ images, index, onClose }: Props) {
   if (index === null) return null
 
   return (
-    <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center">
+    <div className="fixed inset-0 bg-black z-[100] flex items-center justify-center">
 
       {/* Close */}
       <button
@@ -81,7 +81,7 @@ export default function AdvancedLightbox({ images, index, onClose }: Props) {
       {/* Prev */}
       <button
         onClick={prev}
-        className="absolute z-[120] left-3 sm:left-4 top-1/2 -translate-y-1/2 text-white text-3xl sm:text-4xl bg-black/50 border border-white/30 rounded-full w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center"
+        className="fixed z-[130] left-[max(0.5rem,env(safe-area-inset-left))] sm:left-4 top-1/2 -translate-y-1/2 text-white text-3xl sm:text-4xl bg-black/65 border border-white/40 rounded-full w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center shadow-[0_0_18px_rgba(0,0,0,0.5)]"
         aria-label="Ảnh trước"
       >
         ‹
@@ -90,7 +90,7 @@ export default function AdvancedLightbox({ images, index, onClose }: Props) {
       {/* Next */}
       <button
         onClick={next}
-        className="absolute z-[120] right-3 sm:right-4 top-1/2 -translate-y-1/2 text-white text-3xl sm:text-4xl bg-black/50 border border-white/30 rounded-full w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center"
+        className="fixed z-[130] right-[max(0.5rem,env(safe-area-inset-right))] sm:right-4 top-1/2 -translate-y-1/2 text-white text-3xl sm:text-4xl bg-black/65 border border-white/40 rounded-full w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center shadow-[0_0_18px_rgba(0,0,0,0.5)]"
         aria-label="Ảnh tiếp theo"
       >
         ›
