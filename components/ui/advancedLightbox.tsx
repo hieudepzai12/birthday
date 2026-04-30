@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   images: string[]
@@ -11,6 +11,8 @@ type Props = {
 export default function AdvancedLightbox({ images, index, onClose }: Props) {
   const [current, setCurrent] = useState(index ?? 0)
   const [scale, setScale] = useState(1)
+  const touchStartX = useRef<number | null>(null)
+  const touchDeltaX = useRef(0)
 
   useEffect(() => {
     if (index !== null) setCurrent(index)
@@ -43,15 +45,35 @@ export default function AdvancedLightbox({ images, index, onClose }: Props) {
     setScale((s) => Math.min(Math.max(1, s + e.deltaY * -0.001), 3))
   }
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return
+    touchStartX.current = e.touches[0].clientX
+    touchDeltaX.current = 0
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || e.touches.length !== 1) return
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current
+  }
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null) return
+    const swipeThreshold = 60
+    if (touchDeltaX.current <= -swipeThreshold) next()
+    if (touchDeltaX.current >= swipeThreshold) prev()
+    touchStartX.current = null
+    touchDeltaX.current = 0
+  }
+
   if (index === null) return null
 
   return (
-    <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center">
 
       {/* Close */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white text-3xl"
+        className="absolute z-[120] top-3 left-3 sm:top-4 sm:left-4 text-white text-3xl bg-black/50 border border-white/30 rounded-full w-11 h-11 flex items-center justify-center"
       >
         ✕
       </button>
@@ -59,7 +81,8 @@ export default function AdvancedLightbox({ images, index, onClose }: Props) {
       {/* Prev */}
       <button
         onClick={prev}
-        className="absolute left-4 text-white text-4xl"
+        className="absolute z-[120] left-3 sm:left-4 top-1/2 -translate-y-1/2 text-white text-3xl sm:text-4xl bg-black/50 border border-white/30 rounded-full w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center"
+        aria-label="Ảnh trước"
       >
         ‹
       </button>
@@ -67,7 +90,8 @@ export default function AdvancedLightbox({ images, index, onClose }: Props) {
       {/* Next */}
       <button
         onClick={next}
-        className="absolute right-4 text-white text-4xl"
+        className="absolute z-[120] right-3 sm:right-4 top-1/2 -translate-y-1/2 text-white text-3xl sm:text-4xl bg-black/50 border border-white/30 rounded-full w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center"
+        aria-label="Ảnh tiếp theo"
       >
         ›
       </button>
@@ -76,9 +100,13 @@ export default function AdvancedLightbox({ images, index, onClose }: Props) {
       <img
         src={images[current]}
         onWheel={handleWheel}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         className="max-w-[90%] max-h-[90%] transition-transform duration-200"
         style={{
-          transform: `scale(${scale})`
+          transform: `scale(${scale})`,
+          touchAction: 'pan-y',
         }}
       />
     </div>

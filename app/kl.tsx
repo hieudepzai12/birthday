@@ -14,6 +14,7 @@ export default function KLPage() {
   const [isMuted, setIsMuted] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadMessage, setUploadMessage] = useState('')
+  const [viewportWidth, setViewportWidth] = useState(1280)
   
   const audioRef = useRef<HTMLAudioElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -106,6 +107,15 @@ export default function KLPage() {
 
     return () => clearTimeout(timeout)
   }, [uploadMessage])
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewportWidth(window.innerWidth)
+    }
+    updateViewport()
+    window.addEventListener('resize', updateViewport)
+    return () => window.removeEventListener('resize', updateViewport)
+  }, [])
 
   // ================= AUDIO =================
   useEffect(() => {
@@ -226,6 +236,12 @@ export default function KLPage() {
   }, [activeIndex, images])
 
   const glow = `rgba(${color.r},${color.g},${color.b},0.6)`
+  const isMobile = viewportWidth < 768
+  const isSmallMobile = viewportWidth < 480
+  const carouselSize = isSmallMobile ? 300 : isMobile ? 350 : viewportWidth < 1024 ? 440 : 600
+  const imageWidth = isSmallMobile ? 112 : isMobile ? 128 : viewportWidth < 1024 ? 150 : 200
+  const imageHeight = isSmallMobile ? 148 : isMobile ? 168 : viewportWidth < 1024 ? 195 : 260
+  const radius = Math.round(carouselSize * (isMobile ? 0.36 : 0.34))
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -383,22 +399,22 @@ export default function KLPage() {
         ))}
       </div>
       
-      <div className="fixed top-6 left-6 z-50 px-3 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center gap-2 shadow-lg">
+      <div className="fixed top-3 left-3 sm:top-6 sm:left-6 z-50 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center gap-1.5 sm:gap-2 shadow-lg max-w-[calc(100vw-8rem)] sm:max-w-none">
         <Cake className="w-4 h-4 text-pink-300" />
-        <span className="text-sm font-semibold tracking-wide text-yellow-200">Happy Birthday to Khanh Linh</span>
-        <span className="text-base" aria-hidden="true">🎂</span>
+        <span className="text-xs sm:text-sm font-semibold tracking-wide text-yellow-200 truncate">Happy Birthday to Khanh Linh</span>
+        <span className="text-sm sm:text-base" aria-hidden="true">🎂</span>
       </div>
       
-      <div className="fixed top-6 right-4 sm:right-6 z-50 flex flex-col items-end gap-2">
+      <div className="fixed top-3 right-3 sm:top-6 sm:right-6 z-50 flex flex-col items-end gap-2">
         <Link
           href="/"
-          className="relative overflow-hidden px-4 py-2 rounded-full font-semibold text-white bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 border border-white/40 shadow-[0_0_18px_rgba(236,72,153,0.5)] hover:scale-105 hover:shadow-[0_0_24px_rgba(168,85,247,0.65)] transition-all duration-300 flex items-center gap-2"
+          className="relative overflow-hidden px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-semibold text-sm sm:text-base text-white bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 border border-white/40 shadow-[0_0_18px_rgba(236,72,153,0.5)] hover:scale-105 hover:shadow-[0_0_24px_rgba(168,85,247,0.65)] transition-all duration-300 flex items-center gap-1.5 sm:gap-2"
         >
           <span className="absolute inset-0 bg-white/20 blur-xl animate-pulse" />
           <ArrowLeft className="w-4 h-4" />
           <span className="relative">Trang chính</span>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <div>
             <input
               ref={fileInputRef}
@@ -410,7 +426,7 @@ export default function KLPage() {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="relative overflow-hidden px-4 py-2 rounded-full font-semibold text-black bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 border border-white/60 shadow-[0_0_18px_rgba(251,191,36,0.55)] hover:scale-105 hover:shadow-[0_0_24px_rgba(244,114,182,0.65)] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="relative overflow-hidden px-3 py-1.5 sm:px-4 sm:py-2 rounded-full font-semibold text-xs sm:text-sm text-black bg-gradient-to-r from-yellow-300 via-orange-300 to-pink-300 border border-white/60 shadow-[0_0_18px_rgba(251,191,36,0.55)] hover:scale-105 hover:shadow-[0_0_24px_rgba(244,114,182,0.65)] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
               disabled={isUploading}
               title="Upload ảnh mới"
             >
@@ -425,13 +441,13 @@ export default function KLPage() {
           </div>
           <button
             onClick={toggleAudio}
-            className="p-3 bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-300 border border-white/60 rounded-full shadow-[0_0_18px_rgba(34,211,238,0.55)] hover:shadow-[0_0_24px_rgba(129,140,248,0.7)] transition-all duration-300 transform hover:scale-110"
+            className="p-2.5 sm:p-3 bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-300 border border-white/60 rounded-full shadow-[0_0_18px_rgba(34,211,238,0.55)] hover:shadow-[0_0_24px_rgba(129,140,248,0.7)] transition-all duration-300 transform hover:scale-110"
             title={isMuted ? "Unmute music" : "Mute music"}
           >
             {isMuted ? (
-              <VolumeX className="w-6 h-6 text-black" />
+              <VolumeX className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
             ) : (
-              <Volume2 className="w-6 h-6 text-black" />
+              <Volume2 className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
             )}
           </button>
         </div>
@@ -448,12 +464,12 @@ export default function KLPage() {
         />
       )}
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-3 sm:px-4 pt-28 sm:pt-24 pb-8">
 
-        <div className="flex items-center justify-center gap-2 md:gap-3 mb-6 md:mb-8 flex-wrap">
+        <div className="flex items-center justify-center gap-1.5 md:gap-3 mb-5 md:mb-8 flex-wrap">
           <PartyPopper className="float-animation w-7 md:w-10 h-7 md:h-10 text-yellow-300" />
           <Cake className="float-animation w-8 md:w-12 h-8 md:h-12 text-pink-400" />
-          <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-pink-400 to-cyan-400 text-transparent bg-clip-text text-center">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold bg-gradient-to-r from-pink-400 to-cyan-400 text-transparent bg-clip-text text-center">
             HAPPY BIRTHDAY
           </h1>
           <Gift className="float-animation w-7 md:w-10 h-7 md:h-10 text-fuchsia-300" style={{ animationDelay: '0.2s' }} />
@@ -461,41 +477,9 @@ export default function KLPage() {
           <Cake className="float-animation w-8 md:w-12 h-8 md:h-12 text-cyan-400" style={{ animationDelay: '0.5s' }} />
         </div>
 
-        {/* CIRCULAR CAROUSEL */}
-        <style>{`
-          @media (max-width: 1024px) {
-            .carousel-container {
-              width: 500px !important;
-              height: 500px !important;
-            }
-            .carousel-image {
-              width: 160px !important;
-              height: 210px !important;
-            }
-          }
-          @media (max-width: 768px) {
-            .carousel-container {
-              width: 400px !important;
-              height: 400px !important;
-            }
-            .carousel-image {
-              width: 140px !important;
-              height: 180px !important;
-            }
-          }
-          @media (max-width: 480px) {
-            .carousel-container {
-              width: 300px !important;
-              height: 300px !important;
-            }
-            .carousel-image {
-              width: 110px !important;
-              height: 140px !important;
-            }
-          }
-        `}</style>
         <div
-          className="carousel-container relative w-[600px] h-[600px] flex items-center justify-center"
+          className="relative flex items-center justify-center"
+          style={{ width: `${carouselSize}px`, height: `${carouselSize}px` }}
           onMouseEnter={() => (isHovering.current = true)}
           onMouseLeave={() => {
             isHovering.current = false
@@ -514,7 +498,6 @@ export default function KLPage() {
             const imageAngle = anglePerImage * i - anglePerImage * activeIndex
             
             // Tính toán vị trí trong vòng tròn
-            const radius = 200
             const angle = (imageAngle * Math.PI) / 180
             const x = Math.cos(angle) * radius
             const y = Math.sin(angle) * radius
@@ -549,11 +532,13 @@ export default function KLPage() {
                       setActiveIndex(i)
                     }
                   }}
-                  className={`carousel-image w-[200px] h-[260px] object-cover rounded-xl cursor-pointer shadow-lg hover:shadow-2xl transition-all ${
+                  className={`object-cover rounded-xl cursor-pointer shadow-lg hover:shadow-2xl transition-all ${
                     i === activeIndex && isZoomed ? 'zoom-animation' : ''
                   }`}
                   style={{
                     ...style,
+                    width: `${imageWidth}px`,
+                    height: `${imageHeight}px`,
                     boxShadow: i === activeIndex ? `0 0 60px ${glow}` : `0 4px 20px rgba(0,0,0,0.5)`,
                   }}
                 />
@@ -572,7 +557,7 @@ export default function KLPage() {
         </div>
 
         {/* Progress */}
-        <div className="w-64 md:w-80 h-1 bg-white/20 mt-6">
+        <div className="w-56 sm:w-64 md:w-80 h-1 bg-white/20 mt-5 sm:mt-6">
           <div
             className="h-full transition-all duration-100"
             style={{
@@ -597,12 +582,12 @@ export default function KLPage() {
           ))}
         </div>
 
-        <AdvancedLightbox
-          images={images}
-          index={lightboxIndex}
-          onClose={() => setLightboxIndex(null)}
-        />
       </div>
+      <AdvancedLightbox
+        images={images}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+      />
     </div>
   )
 }
